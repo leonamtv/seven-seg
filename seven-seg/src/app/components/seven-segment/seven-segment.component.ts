@@ -7,8 +7,18 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular
 })
 export class SevenSegmentComponent implements AfterViewInit {
 
-  @Input() width: number = 400
+  @Input() width: number = 360
   @Input() height: number = 500
+  private _bitMask: number = 0b0000000
+  @Input() set bitMask ( val: number ) {
+    this._bitMask = val
+    this.drawSevenSegments()
+  }
+  get bitMask () {
+    return this._bitMask
+  }
+  @Input() shadowColor: string = '#51ff00'
+  @Input() shadowBlur: number = 10
   @Input() backgroundColor: string = '#000000'
   @Input() colorOn: string = '#51ff00'
   @Input() colorOff: string = 'rgba(255, 255, 255, 0.1)'
@@ -28,29 +38,6 @@ export class SevenSegmentComponent implements AfterViewInit {
       let width = this.canvas.nativeElement.width
       let height = this.canvas.nativeElement.height
 
-      let offset = 10
-
-      ctx.strokeStyle = this.colorOn;
-      ctx.lineWidth = 0.5;
-
-      for ( let  i = 0; i < height; i += offset ) {
-
-        ctx.beginPath();
-        ctx.moveTo(0, i);
-        ctx.lineTo(width, i);
-        ctx.stroke();
-
-      }
-
-      for ( let  i = 0; i < width; i += offset ) {
-
-        ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, height);
-        ctx.stroke();
-
-      }
-
       const drawSegment = (
         startX: number,
         startY: number,
@@ -63,40 +50,36 @@ export class SevenSegmentComponent implements AfterViewInit {
         let triangleHeight: number = parseInt(( width / 2 ).toString())
 
         ctx.fillStyle = on ? this.colorOn : this.colorOff
+        ctx.shadowColor = this.shadowColor;
+
+        if ( this.colorOn ) {
+          ctx.shadowBlur = this.shadowBlur;
+        } else {
+          ctx.shadowBlur = 0;
+        } 
 
         if ( !vertical ) {
           
           ctx.beginPath();
           ctx.moveTo(startX, startY);
           ctx.lineTo(startX + triangleHeight, startY + width / 2);
+          ctx.lineTo(startX + length - triangleHeight, startY + width / 2);
+          ctx.lineTo(startX + length, startY);
+          ctx.lineTo(startX + length - triangleHeight, startY - width / 2);
           ctx.lineTo(startX + triangleHeight, startY - width / 2);
           ctx.fill();
 
-          ctx.beginPath();
-          ctx.rect(startX + triangleHeight, startY - width / 2, length - ( triangleHeight * 2 ), width);
-          ctx.fill();
-
-          ctx.beginPath();
-          ctx.moveTo(startX + length - triangleHeight, startY - width / 2);
-          ctx.lineTo(startX + length, startY);
-          ctx.lineTo(startX + length - triangleHeight, startY + width / 2);
-          ctx.fill();
         } else {
+          
           ctx.beginPath();
           ctx.moveTo(startX, startY);
           ctx.lineTo(startX + width / 2 , startY + triangleHeight);
+          ctx.lineTo(startX + width / 2 ,  startY + length - triangleHeight );
+          ctx.lineTo(startX             ,  startY + length );
+          ctx.lineTo(startX - width / 2 ,  startY + length - triangleHeight );
           ctx.lineTo(startX - width / 2 , startY + triangleHeight);
           ctx.fill();
 
-          ctx.beginPath();
-          ctx.rect(startX - width / 2, startY + triangleHeight, width, length - ( triangleHeight * 2 ));
-          ctx.fill();
-
-          ctx.beginPath();
-          ctx.moveTo(startX - width / 2 ,  startY + length - triangleHeight );
-          ctx.lineTo(startX             ,  startY + length );
-          ctx.lineTo(startX + width / 2 ,  startY + length - triangleHeight );
-          ctx.fill();
         }
       }
 
@@ -122,13 +105,29 @@ export class SevenSegmentComponent implements AfterViewInit {
         return normalize ( y, 0, 100, 0, height )
       }
 
-      drawSegment (   normX(78),   normY(47),   normX(70),   normY(20),   false , true )      // A
-      drawSegment (   normX(151),  normY(50),   normY(70),   normX(20),   true  , true )      // B
-      drawSegment (   normX(151),  normY(126),  normY(70),   normX(20),   true  , true )      // C
-      drawSegment (   normX(78),   normY(199),  normX(70),   normY(20),   false , true )      // D
-      drawSegment (   normX(75),   normY(126),  normY(70),   normX(20),   true  , true )      // E
-      drawSegment (   normX(75),   normY(50),   normY(70),   normX(20),   true  , true )      // F
-      drawSegment (   normX(78),   normY(123),  normX(70),   normY(20),   false , true )      // G
+      let coordSegments = [
+        { x : 15, y : 50, l : 70, w : 10, v : false }, // G
+        { x : 14, y : 9,  l : 40, w : 13, v : true  }, // F
+        { x : 14, y : 51, l : 40, w : 13, v : true  }, // E
+        { x : 15, y : 92, l : 70, w : 10, v : false }, // D
+        { x : 86, y : 51, l : 40, w : 13, v : true  }, // C
+        { x : 86, y : 9,  l : 40, w : 13, v : true  }, // B
+        { x : 15, y : 8,  l : 70, w : 10, v : false }, // A
+      ]
+      
+      let currentBoolIndex: number = this._bitMask
+      coordSegments.forEach (( coord ) => {
+        let on: boolean = ( currentBoolIndex & 1 ) == 1 
+        drawSegment ( 
+          normX(coord.x), 
+          normY(coord.y), 
+          ( coord.v ) ? normY(coord.l) : normX(coord.l), 
+          ( coord.v ) ? normX(coord.w) : normY(coord.w), 
+          coord.v, 
+          on
+        )
+        currentBoolIndex = currentBoolIndex >> 1
+      }) 
 
     }
   }
