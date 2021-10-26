@@ -17,8 +17,6 @@ export class AppComponent  {
   char8: string = ''
   char9: string = ''
   char10: string = ''
-  char11: string = ''
-  char12: string = ''
   i: number = 0
 
   text: string = "Leonam Teixeira de Vasconcelos"
@@ -83,18 +81,18 @@ export class AppComponent  {
 
     setInterval (() => {
       let date = Math.round(new Date().getTime()/1000)
-      this.char1  = ( date / 10 ).toString()
-      this.char2  = ( date / 100 ).toString()
-      this.char3  = ( date / 1000 ).toString()
-      this.char4  = ( date / 10000 ).toString()
-      this.char5  = ( date / 100000 ).toString()
-      this.char6  = ( date / 1000000 ).toString()
-      this.char7  = ( date / 10000000 ).toString()
-      this.char8  = ( date / 100000000 ).toString()
-      this.char9  = ( date / 1000000000 ).toString()
-      this.char10 = ( date / 10000000000 ).toString()
-      this.char11 = ( date / 100000000000 ).toString()
-      this.char12 = ( date / 1000000000000 ).toString()
+      let digits = date.toString().split('');
+      let realDigits = digits.map(Number)
+      this.char1  = realDigits[0].toString() 
+      this.char2  = realDigits[1].toString()
+      this.char3  = realDigits[2].toString()
+      this.char4  = realDigits[3].toString()
+      this.char5  = realDigits[4].toString()
+      this.char6  = realDigits[5].toString()
+      this.char7  = realDigits[6].toString()
+      this.char8  = realDigits[7].toString()
+      this.char9  = realDigits[8].toString()
+      this.char10 = realDigits[9].toString()
     }, 1000)
   }
 

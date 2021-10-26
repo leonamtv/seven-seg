@@ -52,7 +52,7 @@ export class SevenSegmentComponent implements AfterViewInit {
         ctx.fillStyle = on ? this.colorOn : this.colorOff
         ctx.shadowColor = this.shadowColor;
 
-        if ( this.colorOn ) {
+        if ( on ) {
           ctx.shadowBlur = this.shadowBlur;
         } else {
           ctx.shadowBlur = 0;
