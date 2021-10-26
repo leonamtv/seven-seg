@@ -6,7 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent  {
-
   bitMask: number = 0
   char1: string = ''
   char2: string = ''
