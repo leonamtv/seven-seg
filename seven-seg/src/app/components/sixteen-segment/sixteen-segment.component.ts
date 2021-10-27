@@ -204,8 +204,6 @@ export class SixteenSegmentComponent implements AfterViewInit {
         currentBoolIndex = currentBoolIndex >> 1
       }
       
-      console.log(bits)
-
       ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
       type outer = '1' | '2' | '4' | '5' | '6' | '8' | '9' | '17' | '15' | '14' | '10' | '12'
