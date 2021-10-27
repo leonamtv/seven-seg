@@ -9,6 +9,9 @@ export class SevenSegmentComponent implements AfterViewInit {
 
   @Input() width: number = 360
   @Input() height: number = 500
+
+  @Input() randomNoise: boolean = false;
+
   private _bitMask: number = 0b0000000
   @Input() set bitMask ( val: number ) {
     this._bitMask = val
@@ -53,7 +56,7 @@ export class SevenSegmentComponent implements AfterViewInit {
         ctx.shadowColor = this.shadowColor;
 
         if ( on ) {
-          ctx.shadowBlur = this.shadowBlur;
+          ctx.shadowBlur = this.shadowBlur + ( this.randomNoise ? Math.floor( Math.random() * 5 ) : 0 );
         } else {
           ctx.shadowBlur = 0;
         } 

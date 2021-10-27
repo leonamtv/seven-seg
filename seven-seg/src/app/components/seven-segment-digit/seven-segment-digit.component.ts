@@ -10,6 +10,7 @@ export class SevenSegmentDigitComponent implements OnInit {
   public bitMask: number = 0b0000000
   private _character!: string;
 
+  @Input() randomNoise: boolean = false;
   @Input() width: number = 360
   @Input() height: number = 500
   @Input() shadowColor: string = '#51ff00'
@@ -64,7 +65,8 @@ export class SevenSegmentDigitComponent implements OnInit {
     'x' : 55,
     'y' : 59,
     'z' : 109,
-    ' ' : 0
+    ' ' : 0,
+    '-' : 1
   }
 
   private setBitMask () {
